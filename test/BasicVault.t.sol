@@ -88,7 +88,7 @@ contract StateMintedTest is StateMinted {
         
         vm.startPrank(user);
         fun.approve(address(vault), userTokens);
-        vm.expectRevert("Deposit Failed!");
+        vm.expectRevert("Deposit failed!");
         vault.deposit(userTokens);
         vm.stopPrank();
     }
@@ -126,7 +126,7 @@ contract StateDepositedTest is StateDeposited {
         console2.log("Withdraw transaction should revert if transfer fails");
         fun.setFailTransfers(true);
         vm.prank(user);
-        vm.expectRevert("Withdrawal Failed!");
+        vm.expectRevert("Withdrawal failed!");
         vault.withdraw(userTokens);
     }
 
@@ -134,7 +134,7 @@ contract StateDepositedTest is StateDeposited {
         console2.log("User cannot withdraw more than he has deposited");
         vm.prank(user);
         vm.expectRevert(stdError.arithmeticError);
-        vault.withdraw(userTokens + 100*10**18);
+        vault.withdraw(userTokens + (100*10**18));
     }
 
     function testUserWithdrawPartial() public {
@@ -150,7 +150,7 @@ contract StateDepositedTest is StateDeposited {
     }
  
     function testUserWithdrawAll() public {
-        console2.log("User withdraws all deposits from Vault");
+        console2.log("User to withdraw all deposits from Vault");
         vm.prank(user);
 
         vm.expectEmit(true, false, false, true);
