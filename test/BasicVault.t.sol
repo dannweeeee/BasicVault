@@ -13,7 +13,7 @@ abstract contract StateZero is Test {
     address user;
 
     event Deposited(address indexed from, uint amount);
-    event Withdrawal(address indexed from, uint amount);
+    event Withdrawn(address indexed from, uint amount);
 
     function setUp() public virtual {
         fun = new FunTokenWithFailedTransfers();
@@ -142,7 +142,7 @@ contract StateDepositedTest is StateDeposited {
         vm.prank(user);
 
         vm.expectEmit(true, false, false, true);
-        emit Withdrawal(user, userTokens/2);
+        emit Withdrawn(user, userTokens/2);
         vault.withdraw(userTokens/2);
 
         assertEq(vault.balances(user), userTokens/2);
@@ -154,7 +154,7 @@ contract StateDepositedTest is StateDeposited {
         vm.prank(user);
 
         vm.expectEmit(true, false, false, true);
-        emit Withdrawal(user, userTokens);
+        emit Withdrawn(user, userTokens);
         vault.withdraw(userTokens);
 
         assertEq(vault.balances(user), 0);
