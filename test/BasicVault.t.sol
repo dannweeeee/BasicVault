@@ -7,7 +7,6 @@ import "../src/BasicVault.sol";
 import "../test/FunTokenWithFailedTransfers.sol";
 
 abstract contract StateZero is Test {
-        
     BasicVault public vault;
     FunTokenWithFailedTransfers public fun;
     address user;
@@ -25,7 +24,6 @@ abstract contract StateZero is Test {
 }
 
 contract StateZeroTest is StateZero {
-    
     function testGetUserBalance() public {
         console2.log("Check User has zero tokens in vault");
         vm.prank(user);
@@ -40,7 +38,7 @@ contract StateZeroTest is StateZero {
         vm.expectRevert("ERC20: Insufficient approval");
         vault.deposit(amount);
     }
-   
+
     function testUserMintApproveDeposit(uint amount) public {
         console2.log("User mints tokens and deposits into vault");
         vm.startPrank(user);
@@ -56,24 +54,22 @@ contract StateZeroTest is StateZero {
         assertTrue(vault.balances(user) == amount);
         vm.stopPrank();
     }
-
 }
 
 abstract contract StateMinted is StateZero {
     uint userTokens;
-    
-    function setUp() public override virtual {
+
+    function setUp() public virtual override {
         super.setUp();
-        
+
         // state transition: user mints 100 tokens
-        userTokens = 100 * 10**18;
+        userTokens = 100 * 10 ** 18;
         vm.prank(user);
         fun.mint(user, userTokens);
     }
 }
 
 contract StateMintedTest is StateMinted {
-
     function testFuzzUserCannotWithdraw(uint amount) public {
         console2.log("User cannot withdraw with no balance");
         vm.assume(amount > 0 && amount < fun.balanceOf(user));
@@ -85,7 +81,7 @@ contract StateMintedTest is StateMinted {
     function testDepositRevertsIfTransferFails() public {
         console2.log("Deposit transaction should revert if transfer fails");
         fun.setFailTransfers(true);
-        
+
         vm.startPrank(user);
         fun.approve(address(vault), userTokens);
         vm.expectRevert("Deposit failed!");
@@ -97,22 +93,20 @@ contract StateMintedTest is StateMinted {
         console2.log("User deposits into Vault");
         vm.startPrank(user);
         fun.approve(address(vault), userTokens);
-        
+
         vm.expectEmit(true, false, false, true);
         emit Deposited(user, userTokens);
         vault.deposit(userTokens);
-        
+
         assertTrue(vault.balances(user) == userTokens);
         assertTrue(fun.balanceOf(user) == 0);
         vm.stopPrank();
     }
-
 }
 
 abstract contract StateDeposited is StateMinted {
-    
-    function setUp() public override virtual {
-        super.setUp();  
+    function setUp() public virtual override {
+        super.setUp();
         vm.startPrank(user);
         fun.approve(address(vault), userTokens);
         vault.deposit(userTokens);
@@ -121,7 +115,6 @@ abstract contract StateDeposited is StateMinted {
 }
 
 contract StateDepositedTest is StateDeposited {
-    
     function testWithdrawRevertsIfTransferFails() public {
         console2.log("Withdraw transaction should revert if transfer fails");
         fun.setFailTransfers(true);
@@ -134,7 +127,7 @@ contract StateDepositedTest is StateDeposited {
         console2.log("User cannot withdraw more than he has deposited");
         vm.prank(user);
         vm.expectRevert(stdError.arithmeticError);
-        vault.withdraw(userTokens + (100*10**18));
+        vault.withdraw(userTokens + (100 * 10 ** 18));
     }
 
     function testUserWithdrawPartial() public {
@@ -142,13 +135,13 @@ contract StateDepositedTest is StateDeposited {
         vm.prank(user);
 
         vm.expectEmit(true, false, false, true);
-        emit Withdrawn(user, userTokens/2);
-        vault.withdraw(userTokens/2);
+        emit Withdrawn(user, userTokens / 2);
+        vault.withdraw(userTokens / 2);
 
-        assertEq(vault.balances(user), userTokens/2);
-        assertEq(fun.balanceOf(user), userTokens/2);
+        assertEq(vault.balances(user), userTokens / 2);
+        assertEq(fun.balanceOf(user), userTokens / 2);
     }
- 
+
     function testUserWithdrawAll() public {
         console2.log("User to withdraw all deposits from Vault");
         vm.prank(user);
