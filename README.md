@@ -1,7 +1,5 @@
 # Basic Vault
 Project #2 for Arcane x CertiK Developer Workshop
-
-## Build a Basic Vault
 Problem Statement: https://github.com/calnix/Basic-Vault 
 
 ### Basic Vault
