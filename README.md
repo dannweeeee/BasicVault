@@ -2,7 +2,7 @@
 Project #2 for Arcane x CertiK Developer Workshop
 Problem Statement: https://github.com/calnix/Basic-Vault 
 
-### Basic Vault
+### Build a Basic Vault
 A Multi-User Safe
 
 #### Objectives
